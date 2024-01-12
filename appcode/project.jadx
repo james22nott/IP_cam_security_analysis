@@ -1,0 +1,95 @@
+{
+  "projectVersion": 1,
+  "files": [
+    "HDlivecam_1.9.17_apkcombo.com.apk"
+  ],
+  "treeExpansions": [],
+  "codeData": {
+    "comments": [],
+    "renames": []
+  },
+  "openTabs": [
+    {
+      "type": "class",
+      "tabPath": "cn.sharesdk.framework.loopshare.watermark.c",
+      "subPath": "java",
+      "caret": 10444,
+      "view": {
+        "x": 0,
+        "y": 3494
+      }
+    },
+    {
+      "type": "class",
+      "tabPath": "com.huiyun.care.modelBean.LocalVideoBean",
+      "subPath": "java",
+      "caret": 315,
+      "view": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "type": "class",
+      "tabPath": "com.huiyun.care.viewer.user.VideoListActivity",
+      "subPath": "java",
+      "caret": 18984,
+      "view": {
+        "x": 0,
+        "y": 7796
+      }
+    },
+    {
+      "type": "class",
+      "tabPath": "com.hemeng.client.constant.RecordType",
+      "subPath": "java",
+      "caret": 80,
+      "view": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "type": "class",
+      "tabPath": "com.hemeng.client.bean.VideoParamInfo",
+      "subPath": "java",
+      "caret": 405,
+      "view": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "type": "class",
+      "tabPath": "com.hemeng.client.business.g",
+      "subPath": "java",
+      "caret": 9692,
+      "view": {
+        "x": 0,
+        "y": 4942
+      }
+    },
+    {
+      "type": "class",
+      "tabPath": "com.hemeng.client.business.HMViewer",
+      "subPath": "java",
+      "caret": 2739,
+      "view": {
+        "x": 0,
+        "y": 6924
+      }
+    }
+  ],
+  "activeTab": 6,
+  "cacheDir": "HDlivecam_1.9.17_apkcombo.com.apk.cache",
+  "enableLiveReload": false,
+  "searchHistory": [
+    "streamid",
+    "getBitRate",
+    "bitrate",
+    "ffmpeg",
+    "setVideoType",
+    "video",
+    "mpeg"
+  ]
+}
