@@ -18,8 +18,8 @@ def extract_data_from_pcap(pcap_file, connection):
 
 def establish_tcp_connection():
     # IP address and port of the recipient
-    ip_address = "18.222.28.202"
-    port = 16035
+    ip_address = "192.168.12.234"
+    port = 8615
 
     # Create a socket object
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -51,7 +51,7 @@ def send_and_receive_data(client_socket, data):
     return received_data
 
 if __name__ == "__main__":
-    pcap_file = "captures/justlogin.pcap"
+    pcap_file = "captures/directledoff.pcap"
     conn = establish_tcp_connection()
     extracted_data = extract_data_from_pcap(pcap_file, conn)
     close_tcp_connection(conn)
