@@ -19,7 +19,7 @@ def extract_data_from_pcap(pcap_file, connection):
 def establish_tcp_connection():
     # IP address and port of the recipient
     ip_address = "192.168.12.234"
-    port = 8615
+    port = 7591
 
     # Create a socket object
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
