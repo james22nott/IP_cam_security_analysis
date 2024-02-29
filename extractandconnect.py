@@ -3,6 +3,7 @@ from scapy.all import *
 import json
 import re
 
+
 def extract_data_from_pcap(pcap_file, connection):
     # Read the PCAP file
     packets = rdpcap(pcap_file)
@@ -12,7 +13,7 @@ def extract_data_from_pcap(pcap_file, connection):
     for packet in packets:
         # Assuming the data is in the payload of TCP packets
         if TCP in packet and Raw in packet:
-            send_and_receive_data(connection,bytes(packet[Raw].load))
+            send_and_receive_data(connection, bytes(packet[Raw].load))
 
     return extracted_data
 
@@ -31,10 +32,12 @@ def establish_tcp_connection(ip_address, port):
         print(f"Connection failed: {e}")
         return None
 
+
 def close_tcp_connection(client_socket):
     # Close the connection
     client_socket.close()
     print("Connection closed")
+
 
 def send_and_receive_data(client_socket, data):
     # Send data to the server
@@ -54,30 +57,42 @@ def send_and_receive_data(client_socket, data):
             c if ord(c) < 128 else f"\\x{ord(c):02x}" for c in decoded_data
         )
 
-        print("Decoded data:")
-        print(f"Decoded data: {decoded_data}\n")
+        # not quite sure why this is not printing the first part of the string
+        print(f"Received and decoded data: {decoded_data} \n")
 
         # Define a regex pattern to find "type":"event"
-        pattern = r'"type"\s*:\s*"([^"]*)"'
+        pattern = r'"conn_token"\s*:\s*"([^"]*)"'
+        pattern2 = r'"media_ip"\s*:\s*"([^"]*)"'
+        pattern3 = r'"media_port"\s*:\s*"([^"]*)"'
 
         # Use the regex pattern to find the "type" value
         match = re.search(pattern, decoded_data)
+        match2 = re.search(pattern2, decoded_data)
+        match3 = re.search(pattern3, decoded_data)
 
         if match:
             # If a match is found, extract the "type" value
             type_value = match.group(1)
-            print("found type: ")
-            print(type_value)
             global token
             token = type_value
-            return type_value
-        else:
-            print("No 'type' found in the decoded data.")
+            print(f"Token: {token}")
+        if match2:
+            type_value2 = match2.group(1)
+            global med_ip
+            med_ip = type_value2
+            print(f"Media IP: {med_ip}")
+        if match3:
+            type_value3 = match3.group(1)
+            global med_port
+            med_port = type_value3
+            print(f"Media Port: {med_port}")
+        
 
     except UnicodeDecodeError:
         # Handle decoding errors by ignoring the data
         print("Error decoding data as UTF-8. Ignoring...")
         return received_data
+
 
 def extract_modify_send(pcap_file, connection):
     # Read the PCAP file
@@ -95,30 +110,35 @@ def extract_modify_send(pcap_file, connection):
         # modify the data to replace 1:1sc6bvvwaje9dlheni with the token
         if b"1:1sc6bvvwaje9dlheni" in extracted_data:
             print("Token found in extracted data. Modifying...")
-            modified_data = extracted_data.replace(b"1:1sc6bvvwaje9dlheni", token.encode("utf-8"))
+            modified_data = extracted_data.replace(
+                b"1:1sc6bvvwaje9dlheni", token.encode("utf-8"))
 
             # Send the modified data to the server
+            # print(f"Old data: {extracted_data}\n Modified message: {modified_data}\n")
+
             send_and_receive_data(connection, modified_data)
         else:
+            # print(f"Token not found in extracted data: {extracted_data}\n")
             send_and_receive_data(connection, extracted_data)
-
-    return modified_data
+            # pass
 
 
 if __name__ == "__main__":
     global token
+    global med_ip
+    global med_port
     pcap_file = "captures/commands/authservertoconntoken.pcap"
     token = None
-    
+    med_ip = None
+    med_port = None
+
     conn = establish_tcp_connection("18.218.23.115", 16035)
     extracted_data = extract_data_from_pcap(pcap_file, conn)
     close_tcp_connection(conn)
 
-    if token is not None:
-        print("token found: ")
-        print(token, "\n")
-
-        pcap_file = "captures/commands/toservernonvid.pcap"
-        conn = establish_tcp_connection("35.203.181.109", 22045)
+    if token is not None and med_ip is not None and med_port is not None:
+        print(f"Token found: {token} \n")
+        pcap_file = "captures/commands/toservernonvidnostart.pcap"
+        conn = establish_tcp_connection(med_ip, int(med_port))
         modified_data = extract_modify_send(pcap_file, conn)
         close_tcp_connection(conn)

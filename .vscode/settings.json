@@ -1,3 +1,4 @@
 {
-    "vsc-webshark.sharkdFullPath": "/usr/bin/sharkd"
+    "vsc-webshark.sharkdFullPath": "/usr/bin/sharkd",
+    "python.formatting.provider": "yapf"
 }
