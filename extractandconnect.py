@@ -15,11 +15,7 @@ def extract_data_from_pcap(pcap_file, connection):
     return extracted_data
 
 
-def establish_tcp_connection():
-    # IP address and port of the recipient
-    ip_address = "35.203.181.109"
-    port = 22045
-
+def establish_tcp_connection(ip_address, port):
     # Create a socket object
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -46,11 +42,21 @@ def send_and_receive_data(client_socket, data):
     # Receive data from the server
     received_data = client_socket.recv(1024)
     print(f"Received data: {received_data}")
+    # search the received data for "conn_token" and return it
+    conn_token = received_data.decode("utf-8")
+    if "conn_token" in conn_token:
+        conn_token = conn_token.split("token")[1]
+        conn_token = conn_token.split("}")[0]
+        conn_token = conn_token.split(":")[1]
+        conn_token = conn_token.replace('"', "")
+        return conn_token
+    else:
+
 
     return received_data
 
 if __name__ == "__main__":
     pcap_file = "captures/commands/old/ledflag2.pcap"
-    conn = establish_tcp_connection()
+    conn = establish_tcp_connection("18.218.23.115", 16035)
     extracted_data = extract_data_from_pcap(pcap_file, conn)
     close_tcp_connection(conn)
