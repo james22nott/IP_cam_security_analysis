@@ -105,20 +105,18 @@ def extract_modify_send(pcap_file, connection):
         if TCP in packet and Raw in packet:
             extracted_data = packet[Raw].load
 
-        # Modify the extracted data (modify this based on your needs)
-        global token
-        # modify the data to replace 1:1sc6bvvwaje9dlheni with the token
-        if b"1:1sc6bvvwaje9dlheni" in extracted_data:
-            print("Token found in extracted data. Modifying...")
-            modified_data = extracted_data.replace(
-                b"1:1sc6bvvwaje9dlheni", token.encode("utf-8"))
+            # Modify the extracted data (modify this based on your needs)
+            global token
+            # modify the data to replace 1:1sc6bvvwaje9dlheni with the token
+            if b"1:1sc6bvvwaje9dlheni" in extracted_data:
+                print("Token found in extracted data. Modifying...")
+                extracted_data = extracted_data.replace(
+                    b"1:1sc6bvvwaje9dlheni", token.encode("utf-8"))
 
-            # Send the modified data to the server
-            # print(f"Old data: {extracted_data}\n Modified message: {modified_data}\n")
+                # Send the modified data to the server
+                # print(f"Old data: {extracted_data}\n Modified message: {modified_data}\n")
 
-            send_and_receive_data(connection, modified_data)
-        else:
-            # print(f"Token not found in extracted data: {extracted_data}\n")
+                # print(f"Token not found in extracted data: {extracted_data}\n")
             send_and_receive_data(connection, extracted_data)
             # pass
 
