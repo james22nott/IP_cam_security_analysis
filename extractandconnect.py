@@ -57,10 +57,9 @@ def send_and_receive_data(client_socket, data):
             c if ord(c) < 128 else f"\\x{ord(c):02x}" for c in decoded_data
         )
 
-        # not quite sure why this is not printing the first part of the string
         print(f"Received and decoded data: {decoded_data} \n")
 
-        # Define a regex pattern to find "type":"event"
+        # Define a regex pattern to find the required strings
         pattern = r'"conn_token"\s*:\s*"([^"]*)"'
         pattern2 = r'"media_ip"\s*:\s*"([^"]*)"'
         pattern3 = r'"media_port"\s*:\s*"([^"]*)"'
@@ -98,14 +97,14 @@ def extract_modify_send(pcap_file, connection):
     # Read the PCAP file
     packets = rdpcap(pcap_file)
 
-    # Extract data from the packets (modify this based on your needs)
+    # Extract data from the packets
     extracted_data = b''
     for packet in packets:
         # Assuming the data is in the payload of TCP packets
         if TCP in packet and Raw in packet:
             extracted_data = packet[Raw].load
 
-            # Modify the extracted data (modify this based on your needs)
+            # Modify the extracted data
             global token
             # modify the data to replace 1:1sc6bvvwaje9dlheni with the token
             if b"1:1sc6bvvwaje9dlheni" in extracted_data:
@@ -114,11 +113,7 @@ def extract_modify_send(pcap_file, connection):
                     b"1:1sc6bvvwaje9dlheni", token.encode("utf-8"))
 
                 # Send the modified data to the server
-                # print(f"Old data: {extracted_data}\n Modified message: {modified_data}\n")
-
-                # print(f"Token not found in extracted data: {extracted_data}\n")
             send_and_receive_data(connection, extracted_data)
-            # pass
 
 
 if __name__ == "__main__":
