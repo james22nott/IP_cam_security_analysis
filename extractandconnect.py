@@ -106,11 +106,11 @@ def extract_modify_send(pcap_file, connection):
 
             # Modify the extracted data
             global token
-            # modify the data to replace 1:1sc6bvvwaje9dlheni with the token
-            if b"1:1sc6bvvwaje9dlheni" in extracted_data:
+            # modify the data to replace 1:f1o7g1dxn9j33dhk4b with the token
+            if b"1:f1o7g1dxn9j33dhk4b" in extracted_data:
                 print("Token found in extracted data. Modifying...")
                 extracted_data = extracted_data.replace(
-                    b"1:1sc6bvvwaje9dlheni", token.encode("utf-8"))
+                    b"1:f1o7g1dxn9j33dhk4b", token.encode("utf-8"))
 
                 # Send the modified data to the server
             send_and_receive_data(connection, extracted_data)
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     global token
     global med_ip
     global med_port
-    pcap_file = "captures/commands/authservertoconntoken.pcap"
+    pcap_file = "captures/commands/newtoconntoken.pcap"
     token = None
     med_ip = None
     med_port = None
@@ -131,7 +131,7 @@ if __name__ == "__main__":
 
     if token is not None and med_ip is not None and med_port is not None:
         print(f"Token found: {token} \n")
-        pcap_file = "captures/commands/toservernonvidnostart.pcap"
+        pcap_file = "captures/commands/newtoservernonvidnostart.pcap"
         conn = establish_tcp_connection(med_ip, int(med_port))
         modified_data = extract_modify_send(pcap_file, conn)
         close_tcp_connection(conn)

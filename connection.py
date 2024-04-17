@@ -17,9 +17,11 @@ def extract_data_from_pcap(pcap_file, connection):
 
 
 def establish_tcp_connection():
-    # IP address and port of the recipient
-    ip_address = "35.203.181.109"
-    port = 22045
+    # IP address and port of the recipient "18.218.23.115", 16035
+    ip_address = "192.168.12.234"
+    # ip_address = "18.218.23.115"
+    port = 8871
+    # port= 16035
 
     # Create a socket object
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -51,7 +53,7 @@ def send_and_receive_data(client_socket, data):
     return received_data
 
 if __name__ == "__main__":
-    pcap_file = "captures/commands/old/ledflag2.pcap"
+    pcap_file = "captures/commands/newdirect.pcap"
     conn = establish_tcp_connection()
     extracted_data = extract_data_from_pcap(pcap_file, conn)
     close_tcp_connection(conn)
